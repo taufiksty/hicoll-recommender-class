@@ -1,8 +1,18 @@
 <script setup>
+import { useAuthStore } from "~/stores/auth";
+
 const isMenuOpen = ref(false);
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
+};
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+const handleLogout = () => {
+  authStore.logout();
+  router.replace("/");
 };
 </script>
 
@@ -21,11 +31,12 @@ const toggleMenu = () => {
           <NuxtLink class="text-white cursor-pointer text-lg hover:underline">
             Profile
           </NuxtLink>
-          <NuxtLink
+          <button
+            @click.prevent="handleLogout"
             class="text-white font-semibold cursor-pointer text-lg p-3 rounded-lg bg-red-500"
           >
             Keluar
-          </NuxtLink>
+          </button>
         </div>
         <Icon
           name="meteor-icons:bars"
@@ -43,9 +54,12 @@ const toggleMenu = () => {
       <NuxtLink class="text-white cursor-pointer text-sm py-2 hover:underline">
         Profile
       </NuxtLink>
-      <NuxtLink class="text-white cursor-pointer text-sm py-2 hover:underline">
+      <button
+        @click.prevent="handleLogout"
+        class="text-white cursor-pointer text-sm py-2 hover:underline"
+      >
         Keluar
-      </NuxtLink>
+      </button>
     </div>
   </nav>
 </template>

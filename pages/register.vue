@@ -1,7 +1,28 @@
 <script setup>
+import { useAuthStore } from "~/stores/auth";
+
 definePageMeta({
   layout: false,
 });
+
+const inputRegister = ref({
+  fullname: "",
+  email: "",
+  password: "",
+  passwordConfirmation: "",
+});
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+const handleSubmit = async () => {
+  await authStore.register(inputRegister.value);
+  if (authStore.error) {
+    console.log(authStore.error);
+    return;
+  }
+  router.push("/");
+};
 </script>
 
 <template>
@@ -49,11 +70,15 @@ definePageMeta({
       class="bg-white px-4 md:px-12 py-8 md:py-16 rounded-t-3xl md: rounded-tr-none md:rounded-l-[80px] md:basis-2/5 md:flex md:flex-col md:justify-center"
     >
       <h2 class="font-bold md:text-center md:text-2xl">Register</h2>
-      <form action="#" class="flex flex-col gap-4 md:gap-6 mt-5 md:mt-10">
+      <form
+        @submit.prevent="handleSubmit"
+        class="flex flex-col gap-4 md:gap-6 mt-5 md:mt-10"
+      >
         <input
           type="text"
           name="fullname"
           id="fullname"
+          v-model="inputRegister.fullname"
           class="bg-[#F1F6FF] py-3 px-6 md:px-8 md:py-4 rounded-3xl"
           placeholder="Fullname"
         />
@@ -61,6 +86,7 @@ definePageMeta({
           type="email"
           name="email"
           id="email"
+          v-model="inputRegister.email"
           class="bg-[#F1F6FF] py-3 px-6 md:px-8 md:py-4 rounded-3xl"
           placeholder="Email"
         />
@@ -68,6 +94,7 @@ definePageMeta({
           type="password"
           name="password"
           id="password"
+          v-model="inputRegister.password"
           class="bg-[#F1F6FF] py-3 px-6 md:px-8 md:py-4 rounded-3xl"
           placeholder="Password"
         />
@@ -75,10 +102,12 @@ definePageMeta({
           type="password"
           name="confirmation-password"
           id="confirmation-password"
+          v-model="inputRegister.passwordConfirmation"
           class="bg-[#F1F6FF] py-3 px-6 md:px-8 md:py-4 rounded-3xl"
           placeholder="Password Confirmation"
         />
         <button
+          type="submit"
           class="bg-primary text-white md:text-lg py-3 rounded-3xl shadow"
         >
           DAFTAR

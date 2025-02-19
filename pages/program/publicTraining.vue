@@ -1,4 +1,7 @@
 <script setup>
+import { useAuthStore } from "~/stores/auth";
+import { useClassStore } from "~/stores/class";
+
 const listBenefits = [
   {
     image: "/images/intensive-program.png",
@@ -140,6 +143,18 @@ const listFaqs = [
     desc: "Pelatihan metode luring/offline dilakukan pada lokasi yang telah disepakati bersama, dengan didampingi oleh staff HiColleagues peserta dan instruktur dapat fokus menjalankan pelatihan dengan maksimal.",
   },
 ];
+
+const categoryId = ref(1);
+
+const authStore = useAuthStore();
+const classStore = useClassStore();
+
+onMounted(() => {
+  authStore.loadAuthData();
+  if (authStore.isAuthenticated) {
+    classStore.fetchClasses();
+  }
+});
 </script>
 
 <template>
@@ -245,14 +260,13 @@ const listFaqs = [
       class="mt-6 md:mt-12 flex space-x-4 overflow-x-scroll py-2 md:grid md:grid-cols-3 md:gap-x-6 md:gap-y-8"
     >
       <CardClass
-        v-for="(class_, idx) in listClasses"
+        v-for="(class_, idx) in classStore.data.classes"
         :key="idx"
         :image="class_.image"
         :level="class_.level"
         :method="class_.method"
-        :total-session="class_.totalSession"
-        :title="class_.title"
-        :desc="class_.desc"
+        :title="class_.name"
+        :desc="class_.description"
       />
     </div>
   </div>

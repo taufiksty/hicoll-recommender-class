@@ -3,7 +3,6 @@ defineProps({
   image: String,
   level: String,
   method: String,
-  totalSession: Number,
   title: String,
   desc: String,
 });
@@ -21,10 +20,6 @@ defineProps({
         <span
           class="bg-[#FAF6E7] py-1 px-2 text-xs md:text-sm text-textPrimary rounded-3xl"
           >{{ method }}</span
-        >
-        <span
-          class="bg-[#FAECEB] py-1 px-2 text-xs md:text-sm text-textPrimary rounded-3xl"
-          >{{ totalSession }} Sesi</span
         >
       </div>
       <h4 class="mt-2 md:mt-3 font-bold text-textPrimary">{{ title }}</h4>

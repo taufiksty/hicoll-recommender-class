@@ -1,7 +1,26 @@
 <script setup>
+import { useAuthStore } from "~/stores/auth";
+
 definePageMeta({
   layout: false,
 });
+
+const inputLogin = ref({
+  email: "",
+  password: "",
+});
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+const handleLogin = async () => {
+  await authStore.login(inputLogin.value);
+  if (authStore.error) {
+    console.log(authStore.error);
+    return;
+  }
+  router.push("/program/publicTraining");
+};
 </script>
 
 <template>
@@ -49,11 +68,15 @@ definePageMeta({
       class="bg-white px-4 md:px-12 py-8 md:py-16 rounded-t-3xl md: rounded-tr-none md:rounded-l-[80px] md:basis-2/5 md:flex md:flex-col md:justify-center"
     >
       <h2 class="font-bold md:text-center md:text-2xl">Login</h2>
-      <form action="#" class="flex flex-col gap-4 md:gap-6 mt-5 md:mt-10">
+      <form
+        @submit.prevent="handleLogin"
+        class="flex flex-col gap-4 md:gap-6 mt-5 md:mt-10"
+      >
         <input
           type="email"
           name="email"
           id="email"
+          v-model="inputLogin.email"
           class="bg-[#F1F6FF] py-3 px-6 md:px-8 md:py-4 rounded-3xl"
           placeholder="Email"
         />
@@ -61,6 +84,7 @@ definePageMeta({
           type="password"
           name="password"
           id="password"
+          v-model="inputLogin.password"
           class="bg-[#F1F6FF] py-3 px-6 md:px-8 md:py-4 rounded-3xl"
           placeholder="Password"
         />
@@ -70,6 +94,7 @@ definePageMeta({
           >Lupa Sandi?</NuxtLink
         >
         <button
+          type="submit"
           class="bg-primary text-white md:text-lg py-3 rounded-3xl shadow"
         >
           MASUK
