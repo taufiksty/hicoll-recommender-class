@@ -115,14 +115,17 @@ const listClasses = [
 
 const listCategories = [
   {
+    id: 1,
     image: "/images/kelas-teknologi.png",
     title: "Kelas Teknologi",
   },
   {
+    id: 2,
     image: "/images/kelas-bahasa.png",
     title: "Kelas Bahasa",
   },
   {
+    id: 3,
     image: "/images/kelas-soft-skill.png",
     title: "Kelas Soft Skill",
   },
@@ -146,15 +149,22 @@ const listFaqs = [
 
 const categoryId = ref(1);
 
-const authStore = useAuthStore();
 const classStore = useClassStore();
 
-onMounted(() => {
-  authStore.loadAuthData();
-  if (authStore.isAuthenticated) {
-    classStore.fetchClasses();
-  }
-});
+const tokenCookie = useCookie("token");
+
+watch(
+  [categoryId],
+  async () => {
+    await classStore.fetchClasses(categoryId.value, tokenCookie.value);
+  },
+  { immediate: true }
+);
+
+const handleClickCategory = (id) => {
+  console.log("Selected", id);
+  categoryId.value = id;
+};
 </script>
 
 <template>
@@ -246,6 +256,8 @@ onMounted(() => {
         :key="idx"
         :image="category.image"
         :title="category.title"
+        :isActive="categoryId === idx + 1"
+        @click="handleClickCategory(category.id)"
       />
     </div>
   </div>

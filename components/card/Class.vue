@@ -10,7 +10,13 @@ defineProps({
 
 <template>
   <div class="rounded-2xl bg-white shadow min-w-72">
-    <img :src="image" height="164" width="100%" :alt="image" />
+    <img
+      :src="image"
+      height="164"
+      class="md:h-[300px] rounded-t-2xl"
+      width="100%"
+      :alt="image"
+    />
     <div class="p-4 pb-7 md:p-6">
       <div class="flex items-center space-x-1">
         <span
@@ -23,7 +29,9 @@ defineProps({
         >
       </div>
       <h4 class="mt-2 md:mt-3 font-bold text-textPrimary">{{ title }}</h4>
-      <p class="mt-2 md:mt-3 text-textGray text-sm">{{ desc }}</p>
+      <p class="mt-2 md:mt-3 text-textGray text-sm line-clamp-3">
+        {{ desc }}
+      </p>
     </div>
   </div>
 </template>

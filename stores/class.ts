@@ -15,14 +15,9 @@ export const useClassStore = defineStore("class", {
     error: null as string | null,
   }),
   actions: {
-    async fetchClasses(categoryId: number = 1) {
+    async fetchClasses(categoryId: number = 1, token: string) {
       this.loading = true;
       this.error = null;
-
-      const tokenCookie = useCookie("token");
-      const token = tokenCookie.value;
-
-      if (!token) throw new Error("No authentication token found");
 
       try {
         const { data: responseData } = await useFetch<ClassResponse>(

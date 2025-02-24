@@ -1,12 +1,14 @@
-export default defineNuxtRouteMiddleware((to) => {
-  const tokenCookie = useCookie("token");
-  const token = tokenCookie.value;
+import { useAuthStore } from "~/stores/auth";
 
-  if (!token && to.path !== "/") {
+export default defineNuxtRouteMiddleware((to) => {
+  const authStore = useAuthStore();
+  authStore.loadAuthState();
+
+  if (!authStore.data.token && to.path !== "/register" && to.path !== "/") {
     return navigateTo("/");
   }
 
-  if (token && (to.path === "/" || to.path === "/register")) {
+  if (authStore.data.token && (to.path === "/" || to.path === "/register")) {
     return navigateTo("/program/publicTraining");
   }
 });
