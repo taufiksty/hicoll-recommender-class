@@ -2,7 +2,7 @@ export default defineNuxtRouteMiddleware((to) => {
   const tokenCookie = useCookie("token");
   const token = tokenCookie.value;
 
-  if (!token && to.path !== "/") {
+  if (!token && !/^\/(register)?$/.test(to.path)) {
     return navigateTo("/");
   }
 
