@@ -8,7 +8,7 @@ export interface User {
   description?: string;
   linkedin_url?: string;
   image?: string;
-  interests?: string;
+  interests?: string[];
   is_active: boolean;
   is_first_login: boolean;
   password?: string;

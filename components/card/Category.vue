@@ -2,12 +2,18 @@
 defineProps({
   image: String,
   title: String,
+  isActive: Boolean,
 });
+
+const emit = defineEmits(["click"]);
 </script>
 
 <template>
   <div
-    class="min-w-72 bg-[#F1F6FF] rounded-xl p-4 cursor-pointer flex items-center justify-between"
+    :class="`min-w-72 bg-[#F1F6FF] rounded-xl p-4 cursor-pointer flex items-center justify-between ${
+      isActive ? 'border border-primary' : 'border-none'
+    }`"
+    @click="emit('click')"
   >
     <div class="flex flex-col space-y-4">
       <img :src="image" alt="image" width="56" height="56" />

@@ -1,24 +1,65 @@
 <script setup>
 import { onClickOutside } from "@vueuse/core";
+import { useAuthStore } from "~/stores/auth";
 
 const availableInterests = [
-  "Music",
-  "Sports",
-  "Coding",
-  "Reading",
-  "Traveling",
-  "Gaming",
-  "Photography",
-  "Cooking",
-  "Fitness",
-  "Movies",
+  "Programming",
+  "Backend Development",
+  "Web Development",
+  "Business Intelligence",
+  "Product Management",
+  "Agile",
+  "Python",
+  "Data Visualization",
+  "Enterprise System",
+  "Data Science",
+  "Machine Learning",
+  "Management",
+  "Data Analysis",
+  "Cyber Security",
+  "Network",
+  "Hacking",
+  "Cloud Computing",
+  "Devops",
+  "Mobile Development",
+  "Cross Platform",
+  "Frontend Development",
+  "Database",
+  "SQL",
+  "Monitoring",
+  "System Analytics",
+  "UI/UX",
+  "Research",
+  "Web Design",
+  "Big Data",
+  "Testing",
+  "Benchmarking",
+  "AI",
+  "IT Governance",
+  "Linux",
+  "Android Development",
+  "Language",
+  "Korean",
+  "Communication",
+  "Mandarin",
+  "English",
+  "Japanese",
+  "Softskill",
+  "Spreadsheet",
+  "Digital marketing",
+  "Social media",
+  "SEO",
 ];
 
-const selectedInterests = ref(["Coding", "Reading"]); // Example
+const authStore = useAuthStore();
 
 const dropdownOpen = ref(false);
 
 const dropdownRef = ref(null);
+
+const user = ref(authStore.data.user);
+
+const selectedInterests = ref(user.interests || []);
 
 onClickOutside(dropdownRef, () => {
   dropdownOpen.value = false;
@@ -44,6 +85,13 @@ const removeInterest = (interest) => {
     (i) => i !== interest
   );
 };
+
+const router = useRouter();
+
+const handleUpdateProfile = async () => {
+  await authStore.update({ interests: selectedInterests.value });
+  router.go(0);
+};
 </script>
 
 <template>
@@ -51,7 +99,7 @@ const removeInterest = (interest) => {
     <h1 class="text-lg font-bold text-textPrimary md:hidden">Profile</h1>
     <div class="flex flex-col items-center mt-2">
       <img
-        src="/images/default-profile.jpg"
+        :src="user.image ? user.image : '/images/default-profile.jpg'"
         alt="default-profile"
         class="w-32 h-32 rounded-full border"
       />
@@ -62,7 +110,7 @@ const removeInterest = (interest) => {
           <input
             type="text"
             disabled
-            value="Rendy Hutagalung"
+            :value="user.fullname"
             class="px-4 py-2 rounded-lg border text-sm bg-[#F1F6FF] w-full"
           />
         </div>
@@ -71,7 +119,7 @@ const removeInterest = (interest) => {
           <input
             type="text"
             disabled
-            value="rendy.hutagalung@gmail.com"
+            :value="user.email"
             class="px-4 py-2 rounded-lg border text-sm bg-[#F1F6FF] w-full"
           />
         </div>
@@ -80,7 +128,7 @@ const removeInterest = (interest) => {
           <input
             type="text"
             disabled
-            value="0877-8828-276"
+            :value="user.phone_number || '-'"
             class="px-4 py-2 rounded-lg border text-sm bg-[#F1F6FF] w-full"
           />
         </div>
@@ -91,7 +139,7 @@ const removeInterest = (interest) => {
           <input
             type="text"
             disabled
-            value="-"
+            :value="user.linkedin_url || '-'"
             class="px-4 py-2 rounded-lg border text-sm bg-[#F1F6FF] w-full"
           />
         </div>

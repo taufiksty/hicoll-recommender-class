@@ -13,9 +13,17 @@ interface InputLogin {
   password: string;
 }
 
+interface InputUpdate {
+  interests: string[];
+}
+
 interface AuthResponse {
   user: User;
   token: string;
+}
+
+interface UpdateResponse {
+  user: User;
 }
 
 export const useAuthStore = defineStore("auth", {
@@ -33,15 +41,14 @@ export const useAuthStore = defineStore("auth", {
   },
 
   actions: {
-    loadAuthData() {
-      const userCookie = useCookie("user");
+    loadAuthState() {
       const tokenCookie = useCookie("token");
-
-      this.data.user = (userCookie.value as any) || null;
-      console.log(this.data.user);
-      this.data.token = tokenCookie.value || null;
+      const userCookie = useCookie("user");
+      if (tokenCookie.value && userCookie.value) {
+        this.data.token = tokenCookie.value;
+        this.data.user = toRaw(userCookie.value) as any;
+      }
     },
-
     async register(userData: InputRegister) {
       this.loading = true;
       this.error = null;
@@ -79,11 +86,38 @@ export const useAuthStore = defineStore("auth", {
         this.data.user = responseData.value?.user as User;
         this.data.token = responseData.value?.token as string;
 
-        const userCookie = useCookie("user", { path: "/", maxAge: 3600 });
-        const tokenCookie = useCookie("token", { path: "/", maxAge: 3600 });
+        const tokenCookie = useCookie("token");
+        const userCookie = useCookie("user");
 
-        userCookie.value = JSON.stringify(this.data.user);
         tokenCookie.value = this.data.token;
+        userCookie.value = JSON.stringify(this.data.user);
+      } catch (err) {
+        this.error = err instanceof Error ? err.message : "An error occurred";
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async update(userData: InputUpdate) {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { data: responseData } = await useFetch<UpdateResponse>(
+          "http://localhost:8080/api/user",
+          {
+            headers: {
+              Authorization: `Bearer ${this.data.token}`,
+            },
+            method: "PUT",
+            body: userData,
+          }
+        );
+
+        this.data.user = responseData.value?.user as User;
+
+        const userCookie = useCookie("user");
+        userCookie.value = JSON.stringify(this.data.user);
       } catch (err) {
         this.error = err instanceof Error ? err.message : "An error occurred";
       } finally {
@@ -95,11 +129,11 @@ export const useAuthStore = defineStore("auth", {
       this.data.user = null;
       this.data.token = null;
 
-      const userCookie = useCookie("user", { path: "/" });
-      const tokenCookie = useCookie("token", { path: "/" });
+      const tokenCookie = useCookie("token");
+      const userCookie = useCookie("user");
 
-      userCookie.value = null;
       tokenCookie.value = null;
+      userCookie.value = null;
     },
   },
 });
