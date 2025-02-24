@@ -148,7 +148,9 @@ const listFaqs = [
 ];
 
 const categoryId = ref(1);
+const userId = ref(0);
 
+const authStore = useAuthStore();
 const classStore = useClassStore();
 
 const tokenCookie = useCookie("token");
@@ -157,6 +159,10 @@ watch(
   [categoryId],
   async () => {
     await classStore.fetchClasses(categoryId.value, tokenCookie.value);
+    await classStore.fetchRecommendationClasses(
+      userId.value,
+      tokenCookie.value
+    );
   },
   { immediate: true }
 );
@@ -165,6 +171,13 @@ const handleClickCategory = (id) => {
   console.log("Selected", id);
   categoryId.value = id;
 };
+
+console.log(classStore.data.recommendationClasses);
+
+onMounted(() => {
+  authStore.loadAuthState();
+  userId.value = authStore.data.user.id;
+});
 </script>
 
 <template>
@@ -209,7 +222,7 @@ const handleClickCategory = (id) => {
       HiColleagues Pilihan Tepat Akselerasi Skill Digital
     </h2>
     <div
-      class="mt-6 md:mt-12 flex md:grid md:grid-cols-2 gap-x-4 md:gap-10 overflow-x-scroll"
+      class="mt-6 md:mt-12 flex md:grid md:grid-cols-2 gap-x-4 md:gap-10 overflow-x-scroll md:overflow-hidden"
     >
       <CardBenefit
         v-for="(benefit, idx) in listBenefits"
@@ -229,17 +242,16 @@ const handleClickCategory = (id) => {
       Rekomendasi ini didapatkan dari ketertarikan yang kamu minati
     </p>
     <div
-      class="mt-6 md:mt-12 flex space-x-4 md:space-x-6 overflow-x-scroll py-2"
+      class="mt-6 md:mt-12 flex space-x-4 overflow-x-scroll md:overflow-hidden py-2 md:grid md:grid-cols-3 md:gap-x-6 md:gap-y-8"
     >
       <CardClass
-        v-for="(class_, idx) in listClassesRecommendation"
+        v-for="(class_, idx) in classStore.data.recommendationClasses"
         :key="idx"
         :image="class_.image"
         :level="class_.level"
         :method="class_.method"
-        :total-session="class_.totalSession"
-        :title="class_.title"
-        :desc="class_.desc"
+        :title="class_.name"
+        :desc="class_.description"
       />
     </div>
   </div>
@@ -249,7 +261,7 @@ const handleClickCategory = (id) => {
       Jelajahi Kategori Kelas Video Pembelajaran HiColleagues
     </h2>
     <div
-      class="mt-6 md:mt-12 flex md:justify-center space-x-4 md:space-x-8 overflow-x-scroll"
+      class="mt-6 md:mt-12 flex md:justify-center space-x-4 md:space-x-8 overflow-x-scroll md:overflow-hidden"
     >
       <CardCategory
         v-for="(category, idx) in listCategories"
@@ -269,7 +281,7 @@ const handleClickCategory = (id) => {
       Jelajahi Kelas HiColleagues
     </h2>
     <div
-      class="mt-6 md:mt-12 flex space-x-4 overflow-x-scroll py-2 md:grid md:grid-cols-3 md:gap-x-6 md:gap-y-8"
+      class="mt-6 md:mt-12 flex space-x-4 overflow-x-scroll md:overflow-hidden py-2 md:grid md:grid-cols-3 md:gap-x-6 md:gap-y-8"
     >
       <CardClass
         v-for="(class_, idx) in classStore.data.classes"

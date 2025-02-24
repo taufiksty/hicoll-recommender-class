@@ -57,9 +57,9 @@ const dropdownOpen = ref(false);
 
 const dropdownRef = ref(null);
 
-const user = ref(authStore.data.user);
+const user = ref({});
 
-const selectedInterests = ref(user.interests || []);
+const selectedInterests = ref([]);
 
 onClickOutside(dropdownRef, () => {
   dropdownOpen.value = false;
@@ -92,6 +92,12 @@ const handleUpdateProfile = async () => {
   await authStore.update({ interests: selectedInterests.value });
   router.go(0);
 };
+
+onMounted(() => {
+  authStore.loadAuthState();
+  user.value = authStore.data.user;
+  selectedInterests.value = authStore.data.user.interests;
+});
 </script>
 
 <template>
@@ -103,7 +109,7 @@ const handleUpdateProfile = async () => {
         alt="default-profile"
         class="w-32 h-32 rounded-full border"
       />
-      <div class="mt-8 flex flex-col space-y-2">
+      <div class="mt-8 flex flex-col space-y-2 md:w-[22%]">
         <p class="font-semibold text-sm text-textPrimary">Informasi Pribadi</p>
         <div>
           <label for="fullname" class="text-textGray text-xs">Fullname</label>
@@ -166,7 +172,7 @@ const handleUpdateProfile = async () => {
 
           <div
             v-if="dropdownOpen"
-            class="absolute left-0 mt-2 w-full bg-white border rounded-lg shadow-lg z-10 max-h-72 overflow-scroll"
+            class="absolute left-0 mt-2 w-full bg-white border rounded-lg shadow-lg z-10 max-h-72 overflow-scroll md:overflow-x-hidden"
           >
             <div v-for="interest in availableInterests" :key="interest">
               <button
@@ -208,6 +214,7 @@ const handleUpdateProfile = async () => {
       </div>
 
       <button
+        @click.prevent="handleUpdateProfile"
         class="mt-10 bg-primary text-white py-2 text-sm font-semibold rounded-lg w-full md:w-[360px] shadow"
       >
         SIMPAN
